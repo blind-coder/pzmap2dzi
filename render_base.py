@@ -36,7 +36,7 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
                         print('missing tile: {}'.format(tiles[t]))
     return update
 
-def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty):
+def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
     flag_path = os.path.join(out_path, 'layer0_files', str(dzi.base_level))
     util.set_wip(flag_path, tx, ty)
     for layer in range(dzi.layers):
@@ -54,16 +54,16 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty):
                 render_square(tl, im, ox, oy, in_path, sx, sy, layer)
         im = dzi.crop_tile(im, tx, ty)
         if im.getbbox():
-            im.save(os.path.join(layer_output, '{}_{}.png'.format(tx, ty)))
+            im.save(os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format)))
         elif layer == 0 and save_empty:
             util.set_empty(layer_output, tx, ty)
     util.clear_wip(flag_path, tx, ty)
     return True
 
 def base_work(conf, tiles):
-    dzi, tl, in_path, out_path, save_empty = conf
+    dzi, tl, in_path, out_path, save_empty, output_format = conf
     for tx, ty in tiles:
-        render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty)
+        render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format)
 
 def process(args):
     texture_lib = texture.TextureLibrary(args.texture)
@@ -75,11 +75,11 @@ def process(args):
         print('processing base level:')
     dzi = pzdzi.DZI(args.input, args.tile_size, args.layers, args.jumbo_tree_size > 3)
     dzi.ensure_folders(args.output)
-    dzi.save_dzi(args.output)
+    dzi.save_dzi(args.output, None, args.output_format)
     layer0_path = os.path.join(args.output, 'layer0_files', str(dzi.base_level))
     groups = dzi.get_tile_groups(layer0_path, args.group_size)
 
-    conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile)
+    conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile, args.output_format)
 
     t = mp.Task(base_work, conf, args.mp)
     if not t.run(groups, args.verbose, args.stop_key):
@@ -91,7 +91,7 @@ def process(args):
         if args.verbose:
             print('processing layer {} pyramid:'.format(layer))
         path = os.path.join(args.output, 'layer{}_files'.format(layer))
-        if not dzi.merge_all_levels(path, args.mp, args.verbose, args.stop_key):
+        if not dzi.merge_all_levels(path, args.mp, args.verbose, args.stop_key, args.output_format):
             return False
 
 if __name__ == '__main__':
@@ -115,6 +115,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--save-empty-tile', action='store_true')
     parser.add_argument('-s', '--stop-key', type=str, default='')
     parser.add_argument('input', type=str)
+    parser.add_Argument('--output-format', type=str, default='png');
     args = parser.parse_args()
 
     process(args)

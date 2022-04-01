@@ -162,12 +162,12 @@ class DZI(object):
             for level in range(len(self.pyramid)):
                 util.ensure_folder(os.path.join(path, 'layer{}_files'.format(layer), str(level)))
 
-    def save_dzi(self, path, layers=None):
+    def save_dzi(self, path, layers=None, output_format='png'):
         util.ensure_folder(path)
         dzi = '''<?xml version="1.0" encoding="UTF-8"?>
-        <Image xmlns="http://schemas.microsoft.com/deepzoom/2008" TileSize="{}" Overlap="0" Format="png">
+        <Image xmlns="http://schemas.microsoft.com/deepzoom/2008" TileSize="{}" Overlap="0" Format="{}">
                 <Size Width="{}" Height="{}"/>
-        </Image>'''.format(self.tile_size, self.w, self.h)
+        </Image>'''.format(self.tile_size, output_format, self.w, self.h)
         if layers is None:
             layers = self.layers
         for layer in range(layers):
@@ -194,7 +194,7 @@ class DZI(object):
         return groups
 
 
-    def merge_tile(self, path, tx, ty, level):
+    def merge_tile(self, path, tx, ty, level, output_format='png'):
         in_path = os.path.join(path, str(level + 1))
         out_path = os.path.join(path, str(level))
         util.set_wip(out_path, tx, ty)
@@ -207,13 +207,13 @@ class DZI(object):
                 tile.paste(ntile, (self.tile_size * i, self.tile_size * j))
         tile.thumbnail((self.tile_size, self.tile_size), Image.ANTIALIAS)
         tile = self.crop_tile(tile, tx, ty, level)
-        tile.save(os.path.join(out_path, '{}_{}.png'.format(tx, ty)))
+        tile.save(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format)))
         util.clear_wip(out_path, tx, ty)
 
     def _merge_work(self, conf, tx_ty):
         tx, ty = tx_ty
-        path, level = conf
-        self.merge_tile(path, tx, ty, level)
+        path, level, output_format = conf
+        self.merge_tile(path, tx, ty, level, output_format)
 
     def get_level_tiles(self, path, level):
         in_path = os.path.join(path, str(level + 1))
@@ -230,15 +230,15 @@ class DZI(object):
                     tiles.add((x, y))
         return list(tiles)
 
-    def merge_level(self, path, level, parallel=1, verbose=False, stop_key=None):
+    def merge_level(self, path, level, parallel=1, verbose=False, stop_key=None, output_format='png'):
         conf = (path, level)
         t = mp.Task(self._merge_work, conf, parallel)
-        return t.run(self.get_level_tiles(path, level), verbose, stop_key)
+        return t.run(self.get_level_tiles(path, level), verbose, stop_key, output_Format)
 
-    def merge_all_levels(self, path, parallel=1, verbose=False, stop_key=None):
+    def merge_all_levels(self, path, parallel=1, verbose=False, stop_key=None, output_format='png'):
         for level in reversed(range(self.base_level)):
             if verbose:
                 print('processing level {}:'.format(level))
-            if not self.merge_level(path, level, parallel, verbose, stop_key):
+            if not self.merge_level(path, level, parallel, verbose, stop_key, output_format):
                 return False
         return True
