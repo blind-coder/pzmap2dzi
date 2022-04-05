@@ -231,9 +231,9 @@ class DZI(object):
         return list(tiles)
 
     def merge_level(self, path, level, parallel=1, verbose=False, stop_key=None, output_format='png'):
-        conf = (path, level)
+        conf = (path, level, output_format)
         t = mp.Task(self._merge_work, conf, parallel)
-        return t.run(self.get_level_tiles(path, level), verbose, stop_key, output_Format)
+        return t.run(self.get_level_tiles(path, level), verbose, stop_key)
 
     def merge_all_levels(self, path, parallel=1, verbose=False, stop_key=None, output_format='png'):
         for level in reversed(range(self.base_level)):

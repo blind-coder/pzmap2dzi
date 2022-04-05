@@ -107,7 +107,7 @@ class TextureLibrary(object):
                     print('Overwrite t: {}'.format(name))
                 self.lib[name] = texture
 
-    def add_from_pz_path(self, pzmain, debug=False):
+    def add_from_pz_path(self, path, debug=False):
         files = [
             'Erosion.pack',
             'ApCom.pack',
@@ -118,7 +118,7 @@ class TextureLibrary(object):
             'Tiles2x.pack',
         ]
         for f in files:
-            self.add_pack(f, debug)
+            self.add_pack(os.path.join(path, f), debug)
     
     def set_texture_path(self, path):
         self.texture_path = path

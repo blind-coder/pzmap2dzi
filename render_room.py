@@ -141,7 +141,7 @@ COLOR_MAP = {
     'emptyoutside': 'silver',
 }
 DEFAULT_COLOR = 'cyan'
-ROOM_FONT = ImageFont.truetype("arial.ttf", 20)
+ROOM_FONT = ImageFont.truetype("Vera.ttf", 20)
 def render_text(draw, x, y, text, color, font):
     w, h = draw.textsize(text, font)
     if w >= pzdzi.SQR_WIDTH:

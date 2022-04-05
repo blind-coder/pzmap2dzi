@@ -118,8 +118,8 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-e', '--save-empty-tile', action='store_true')
     parser.add_argument('-s', '--stop-key', type=str, default='')
+    parser.add_argument('--output-format', type=str, default='png')
     parser.add_argument('input', type=str)
-    parser.add_Argument('--output-format', type=str, default='png');
     args = parser.parse_args()
 
     process(args)

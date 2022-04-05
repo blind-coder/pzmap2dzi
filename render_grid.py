@@ -4,8 +4,8 @@ from pzmap2dzi import util, mp, pzdzi
 
 CELL_COLOR = (255, 255, 0, 255) # yellow
 BLOCK_COLOR = (0, 255, 0, 255) # green
-CELL_FONT = ImageFont.truetype("arial.ttf", 40)
-BLOCK_FONT = ImageFont.truetype("arial.ttf", 20)
+CELL_FONT = ImageFont.truetype("Vera.ttf", 40)
+BLOCK_FONT = ImageFont.truetype("Vera.ttf", 20)
 def render_text(draw, x, y, text, color, font):
     w, h = draw.textsize(text, font)
     draw.text((x - w // 2, y - h // 2), text, color, font)
