@@ -1,12 +1,16 @@
 from PIL import Image, ImageDraw, ImageFont
+
 import os
+
 from pzmap2dzi import cell, texture, util, mp, pzdzi
+
 try:
     from functools import lru_cache
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 @lru_cache(maxsize=16)
+
 def load_cell(path, cx, cy):
     return cell.load_cell(path, cx, cy)
 
@@ -97,8 +101,8 @@ def process(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='PZ map base render')
-    parser.add_argument('-o', '--output', type=str, default='./output/html/base')
-    parser.add_argument('-t', '--texture', type=str, default='./output/texture')
+    parser.add_argument('-o', '--output', type=str, default='./output/base')
+    parser.add_argument('-t', '--texture', type=str, default='./textures')
     parser.add_argument('-m', '--mp', type=int, default=1)
     parser.add_argument('--season', type=str, default='summer2',
                         choices=['spring', 'summer', 'summer2', 'autumn', 'winter'])

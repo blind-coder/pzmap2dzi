@@ -118,7 +118,7 @@ class TextureLibrary(object):
             'Tiles2x.pack',
         ]
         for f in files:
-            self.add_pack(os.path.join(pzmain, 'media', 'texturepacks', f), debug)
+            self.add_pack(f, debug)
     
     def set_texture_path(self, path):
         self.texture_path = path
@@ -177,7 +177,7 @@ def save_img(path, job):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='PZ texture unpacker')
-    parser.add_argument('-o', '--output', type=str, default='.')
+    parser.add_argument('-o', '--output', type=str, default='./textures/')
     parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('-m', '--mp', type=int, default=1)
     parser.add_argument('input', type=str)
