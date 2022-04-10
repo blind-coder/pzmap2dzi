@@ -37,7 +37,7 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
                         tex.render(im, ox, oy)
                         update = True
                     else:
-                        print('missing tile: {}'.format(tiles[t]))
+                        print('missing tile at {}x{} (cell {}x{} subtile {}x{}): {}'.format(sx, sy, cx, cy, subx, suby, tiles[t]))
     return update
 
 def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
