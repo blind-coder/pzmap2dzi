@@ -126,7 +126,7 @@ class TextureLibrary(object):
 
     def get_by_name(self, name):
         if 'jumbo_tree_01_' in name:
-            name = 'jumbo_tree_01_{}'.format(random.randint(1,10))
+            name = 'jumbo_tree_01_{}'.format(random.randint(0,10))
         t = self.lib.get(name, None)
         if t:
             return t
@@ -136,8 +136,8 @@ class TextureLibrary(object):
             if os.path.exists(file_path):
                 im = Image.open(file_path)
                 if im:
-                    if 'JUMBO' in name or 'jumbo' in name:
-                        a = Texture(im, -128, -256)
+                    if 'JUMBO' in name:
+                        t = Texture(im, -128, -256)
                     else:
                         t = Texture(im, 0, 0)
                     self.lib[name] = t
