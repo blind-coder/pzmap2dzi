@@ -2,6 +2,7 @@ from __future__ import print_function
 from PIL import Image
 import io
 import os
+import random
 if __package__ is not None:
     from . import util, mp, plants
 
@@ -124,6 +125,8 @@ class TextureLibrary(object):
         self.texture_path = path
 
     def get_by_name(self, name):
+        if 'jumbo_tree_01_' in name:
+            name = 'jumbo_tree_01_{}'.format(random.randint(1,10))
         t = self.lib.get(name, None)
         if t:
             return t
@@ -133,12 +136,13 @@ class TextureLibrary(object):
             if os.path.exists(file_path):
                 im = Image.open(file_path)
                 if im:
-                    if 'JUMBO' in name:
-                        t = Texture(im, -128, -256)
+                    if 'JUMBO' in name or 'jumbo' in name:
+                        a = Texture(im, -128, -256)
                     else:
                         t = Texture(im, 0, 0)
                     self.lib[name] = t
                     return t
+        print('{} not found!'.format(name))
         return None
 
     def save_all(self, path, parallel=1):

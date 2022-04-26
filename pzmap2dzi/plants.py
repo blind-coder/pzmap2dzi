@@ -1,3 +1,4 @@
+import random
 
 _TREE_DEF = [
     ('American Holly', 'e_americanholly', True),
@@ -126,23 +127,22 @@ class PlantsInfo(object):
         # jumbo tree
         jumbo_size = max(tree_size, min(5, int(jumbo_size)))
         idx = jumbo_size % 4
-        prefix = _TREE_DEF[jumbo_type][1]
-        stages = 4
-        if jumbo_size >= 4:
-            prefix += 'JUMBO'
-            stages = 2
-        textures = ['{}_1_{}'.format(prefix, idx)]
-        if season == 'spring':
-            textures.append('{}_1_{}'.format(prefix, idx + stages * 2))
-        if season == 'summer':
-            textures.append('{}_1_{}'.format(prefix, idx + stages * 3))
-        if season == 'summer2':
-            textures.append('{}_1_{}'.format(prefix, idx + stages * 4))
-        if season == 'autumn':
-            textures.append('{}_1_{}'.format(prefix, idx + stages * 5))
-        if snow:
-            textures = ['{}_1_{}'.format(prefix, idx + stages)]
-        self.mapping['jumbo_tree_01_0'] = textures
-
-            
-
+        for i in range(0,11):
+            prefix = _TREE_DEF[i][1]
+            stages = 4
+            if jumbo_size >= 4:
+                prefix += 'JUMBO'
+                stages = 2
+            textures = ['{}_1_{}'.format(prefix, idx)]
+            if season == 'spring':
+                textures.append('{}_1_{}'.format(prefix, idx + stages * 2))
+            if season == 'summer':
+                textures.append('{}_1_{}'.format(prefix, idx + stages * 3))
+            if season == 'summer2':
+                textures.append('{}_1_{}'.format(prefix, idx + stages * 4))
+            if season == 'autumn':
+                textures.append('{}_1_{}'.format(prefix, idx + stages * 5))
+            if snow:
+                textures = ['{}_1_{}'.format(prefix, idx + stages)]
+            print('Adding jumbo_tree_01_{} = {}'.format(i, textures[1]))
+            self.mapping['jumbo_tree_01_{}'.format(i)] = textures
