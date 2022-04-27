@@ -202,9 +202,17 @@ class DZI(object):
         for i, j in [(0, 0), (1, 0), (0, 1), (1, 1)]:
             ntx = tx * 2 + i
             nty = ty * 2 + j
-            ntile = load_tile(in_path, ntx, nty)
+            try:
+                ntile = load_tile(in_path, ntx, nty)
+            except:
+                print('Error loading {}/{}_{}.png!'.format(in_path, ntx, nty))
+                continue
             if ntile:
-                tile.paste(ntile, (self.tile_size * i, self.tile_size * j))
+                try:
+                    tile.paste(ntile, (self.tile_size * i, self.tile_size * j))
+                except:
+                    print('Error pasting {}/{}_{}.{} onto {}/{}_{}.{}!'.format(in_path, ntx, nty, output_format, out_path, tx, ty, output_format))
+                    continue
         tile.thumbnail((self.tile_size, self.tile_size), Image.ANTIALIAS)
         tile = self.crop_tile(tile, tx, ty, level)
         tile.save(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format)))
