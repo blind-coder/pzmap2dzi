@@ -20,7 +20,7 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
     bx, x = divmod(subx, 10)
     by, y = divmod(suby, 10)
     data = load_cell(path, cx, cy)
-    if not data:
+    if not data: # Cell doesn't exist
         return False
     block = data['blocks'][bx * 30 + by]
     ldata = block[layer]
@@ -41,15 +41,22 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
     return update
 
 def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
+    # Get the path for the WIP flag and set it
     flag_path = os.path.join(out_path, 'layer0_files', str(dzi.base_level))
     util.set_wip(flag_path, tx, ty)
+
+    # Iterate through all layers
     for layer in range(dzi.layers):
         gx0, gy0 = dzi.tile2grid(tx, ty, layer)
         left, right, top, bottom = dzi.tile_grid_bound(tx, ty, layer)
+
+        # Create a new image canvas of tile_size^2 size
         im = Image.new('RGBA', (dzi.tile_size, dzi.tile_size))
-        layer_output = os.path.join(out_path, 'layer{}_files'.format(layer), str(dzi.base_level))
+
+        # Iterate top-down left-right and render the tiles on the square
         for gy in range(top, bottom + 1):
             for gx in range(left, right + 1):
+                # ???
                 if (gx + gy) & 1:
                     continue
                 sx = (gx + gy) // 2
@@ -57,9 +64,14 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
                 ox, oy = pzdzi.get_offset_in_tile(gx - gx0, gy - gy0)
                 render_square(tl, im, ox, oy, in_path, sx, sy, layer)
         im = dzi.crop_tile(im, tx, ty)
+
+        # Output path where the image will be stored
+        layer_output = os.path.join(out_path, 'layer{}_files'.format(layer), str(dzi.base_level))
         if im.getbbox():
+            # Save the image
             im.save(os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format)))
         elif layer == 0 and save_empty:
+            # Save an empty file, only if requested
             util.set_empty(layer_output, tx, ty)
     util.clear_wip(flag_path, tx, ty)
     return True
@@ -70,27 +82,47 @@ def base_work(conf, tiles):
         render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format)
 
 def process(args):
+    # Load textures from extracted packs
     texture_lib = texture.TextureLibrary(args.texture)
+
+    # Setup plants according to parameters
     texture_lib.config_plants(args.season, args.snow, args.flower, args.large_bush,
                               args.tree_size, args.jumbo_tree_size, args.jumbo_tree_type)
+
+    # Create output directory
     util.ensure_folder(args.output)
 
     if args.verbose:
         print('processing base level:')
+
+    # Initialize DeepZoom Image pyramid
+    # params: inputdirectory, tilesize in px, layers to process (1..8), jumbo tree siz
     dzi = pzdzi.DZI(args.input, args.tile_size, args.layers, args.jumbo_tree_size > 3)
+
+    # create DZI directories
     dzi.ensure_folders(args.output)
+
+    # save xml file
     dzi.save_dzi(args.output, None, args.output_format)
+
+    # create path for layer 0
     layer0_path = os.path.join(args.output, 'layer0_files', str(dzi.base_level))
+
+    # ???
     groups = dzi.get_tile_groups(layer0_path, args.group_size)
 
+    # configuration for the multithread runner
     conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile, args.output_format)
 
+    # finally, create the floor level
     t = mp.Task(base_work, conf, args.mp)
     if not t.run(groups, args.verbose, args.stop_key):
         return False
+
     if args.verbose:
         print('base done')
 
+    # create the pyramid from base layers
     for layer in range(dzi.layers):
         if args.verbose:
             print('processing layer {} pyramid:'.format(layer))
