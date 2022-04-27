@@ -104,7 +104,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', type=str, default='./output/base')
     parser.add_argument('-t', '--texture', type=str, default='./textures')
     parser.add_argument('-m', '--mp', type=int, default=1)
-    parser.add_argument('--season', type=str, default='summer2',
+    parser.add_argument('--season', type=str, default='summer',
                         choices=['spring', 'summer', 'summer2', 'autumn', 'winter'])
     parser.add_argument('--snow', action='store_true')
     parser.add_argument('--large-bush', action='store_true')
@@ -123,5 +123,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     process(args)
-
-
