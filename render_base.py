@@ -40,7 +40,7 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
                         print('missing tile at {}x{} (cell {}x{} subtile {}x{}): {}'.format(sx, sy, cx, cy, subx, suby, tiles[t]))
     return update
 
-def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
+def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, dry_run):
     # Get the path for the WIP flag and set it
     flag_path = os.path.join(out_path, 'layer0_files', str(dzi.base_level))
     util.set_wip(flag_path, tx, ty)
@@ -69,7 +69,8 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
         layer_output = os.path.join(out_path, 'layer{}_files'.format(layer), str(dzi.base_level))
         if im.getbbox():
             # Save the image
-            im.save(os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format)))
+            if not dry_run:
+                im.save(os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format)))
         elif layer == 0 and save_empty:
             # Save an empty file, only if requested
             util.set_empty(layer_output, tx, ty)
@@ -77,9 +78,9 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format):
     return True
 
 def base_work(conf, tiles):
-    dzi, tl, in_path, out_path, save_empty, output_format = conf
+    dzi, tl, in_path, out_path, save_empty, output_format, dry_run = conf
     for tx, ty in tiles:
-        render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format)
+        render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, dry_run)
 
 def process(args):
     # Load textures from extracted packs
@@ -112,7 +113,7 @@ def process(args):
     groups = dzi.get_tile_groups(layer0_path, args.group_size)
 
     # configuration for the multithread runner
-    conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile, args.output_format)
+    conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile, args.output_format, args.dry_run)
 
     # finally, create the floor level
     t = mp.Task(base_work, conf, args.mp)
@@ -121,6 +122,10 @@ def process(args):
 
     if args.verbose:
         print('base done')
+
+    # No pyramid on dry runs
+    if args.dry_run:
+        return True
 
     # create the pyramid from base layers
     for layer in range(dzi.layers):
@@ -151,6 +156,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--save-empty-tile', action='store_true')
     parser.add_argument('-s', '--stop-key', type=str, default='')
     parser.add_argument('--output-format', type=str, default='png')
+    parser.add_argument('-n', '--dry-run', action='store_true')
     parser.add_argument('input', type=str)
     args = parser.parse_args()
 
