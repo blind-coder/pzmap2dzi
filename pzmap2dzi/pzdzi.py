@@ -197,7 +197,10 @@ class DZI(object):
     def merge_tile(self, path, tx, ty, level, output_format='png'):
         in_path = os.path.join(path, str(level + 1))
         out_path = os.path.join(path, str(level))
-        util.set_wip(out_path, tx, ty)
+        if os.path.exists(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format))):
+            return
+        if not util.set_wip_id(out_path, tx, ty):
+            return
         tile = Image.new('RGBA', (self.tile_size * 2, self.tile_size * 2))
         for i, j in [(0, 0), (1, 0), (0, 1), (1, 1)]:
             ntx = tx * 2 + i

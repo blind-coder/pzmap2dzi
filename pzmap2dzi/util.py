@@ -1,5 +1,5 @@
 import struct
-import os
+import os, platform
 import re
 
 HEADER_FILE_PATTERN = re.compile('(\\d+)_(\\d+)\\.lotheader$')
@@ -38,6 +38,19 @@ def get_done_tiles(path):
 def set_empty(path, x, y):
     with open(os.path.join(path, '{}_{}.empty'.format(x, y)), 'w') as f:
         pass
+
+def set_wip_id(path, x, y):
+    wipfile = os.path.join(path, '{}_{}.pending'.format(x, y))
+    if os.path.exists(wipfile):
+        return False
+    with open(wipfile, 'w') as f:
+        f.write('{}-{}'.format(platform.node(), os.getpid()))
+    with open(wipfile, 'r') as f:
+        line = f.readline()
+        if line.strip() == '{}-{}'.format(platform.node(), os.getpid()):
+            return True
+        print('{} == {}'.format(line.strip(), '{}-{}'.format(platform.node(), os.getpid())))
+    return False
 
 def set_wip(path, x, y):
     with open(os.path.join(path, '{}_{}.pending'.format(x, y)), 'w') as f:
