@@ -124,9 +124,9 @@ class TextureLibrary(object):
     def set_texture_path(self, path):
         self.texture_path = path
 
-    def get_by_name(self, name):
+    def get_by_name(self, name, x=0, y=0):
         if 'jumbo_tree_01_' in name:
-            name = 'jumbo_tree_01_{}'.format(random.randint(0,10))
+            name = 'jumbo_tree_01_{}'.format((x+y)%11)
         t = self.lib.get(name, None)
         if t:
             return t

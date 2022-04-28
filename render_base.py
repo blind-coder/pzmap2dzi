@@ -32,7 +32,7 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
             if sqr:
                 for t in sqr['tiles']:
                     tiles = data['header']['tiles']
-                    tex = tl.get_by_name(tiles[t])
+                    tex = tl.get_by_name(tiles[t], sx, sy)
                     if tex:
                         tex.render(im, ox, oy)
                         update = True
