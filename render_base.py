@@ -44,6 +44,7 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, d
     # Get the path for the WIP flag and set it
     flag_path = os.path.join(out_path, 'layer0_files', str(dzi.base_level))
     if not util.set_wip(flag_path, tx, ty):
+        print('{} held by other node'.format(flag_path))
         return
 
     # Iterate through all layers

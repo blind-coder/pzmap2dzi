@@ -200,6 +200,7 @@ class DZI(object):
         if os.path.exists(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format))):
             return
         if not util.set_wip(out_path, tx, ty):
+            print('{} held by other node'.format(flag_path))
             return
         tile = Image.new('RGBA', (self.tile_size * 2, self.tile_size * 2))
         for i, j in [(0, 0), (1, 0), (0, 1), (1, 1)]:
