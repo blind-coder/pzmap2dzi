@@ -43,7 +43,8 @@ def render_square(tl, im, ox, oy, path, sx, sy, layer):
 def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, dry_run):
     # Get the path for the WIP flag and set it
     flag_path = os.path.join(out_path, 'layer0_files', str(dzi.base_level))
-    util.set_wip(flag_path, tx, ty)
+    if not util.set_wip(flag_path, tx, ty):
+        return
 
     # Iterate through all layers
     for layer in range(dzi.layers):

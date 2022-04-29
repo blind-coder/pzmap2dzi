@@ -21,7 +21,8 @@ def render_gridy(draw, x, y, color, width):
     draw.line([xt, yt, xr, yr], fill=color, width=width)
 
 def render_grid(dzi, tx, ty, out_path, cell_grid, block_grid, save_empty):
-    util.set_wip(out_path, tx, ty)
+    if not util.set_wip(out_path, tx, ty):
+        return
     gx0, gy0 = dzi.tile2grid(tx, ty, 0)
     left, right, top, bottom = dzi.tile_grid_bound(tx, ty, 0)
     im = None
