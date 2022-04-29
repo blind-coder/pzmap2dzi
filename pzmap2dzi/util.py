@@ -39,20 +39,22 @@ def set_empty(path, x, y):
     with open(os.path.join(path, '{}_{}.empty'.format(x, y)), 'w') as f:
         pass
 
-def set_wip_id(path, x, y):
+def set_wip(path, x, y):
     wipfile = os.path.join(path, '{}_{}.pending'.format(x, y))
     if os.path.exists(wipfile):
         return False
-    with open(wipfile, 'w') as f:
-        f.write('{}-{}'.format(platform.node(), os.getpid()))
-    with open(wipfile, 'r') as f:
-        line = f.readline()
-        if line.strip() == '{}-{}'.format(platform.node(), os.getpid()):
-            return True
-        print('{} == {}'.format(line.strip(), '{}-{}'.format(platform.node(), os.getpid())))
+    try:
+        os.symlink('{}-{}'.format(platform.node(), os.getpid()), wipfile)
+    except:
+        return False
+
+    link = os.readlink(wipfile)
+    if link.strip() == '{}-{}'.format(platform.node(), os.getpid()):
+        return True
+    print('{} == {}'.format(link.strip(), '{}-{}'.format(platform.node(), os.getpid())))
     return False
 
-def set_wip(path, x, y):
+def set_wip_noid(path, x, y):
     with open(os.path.join(path, '{}_{}.pending'.format(x, y)), 'w') as f:
         pass
 
