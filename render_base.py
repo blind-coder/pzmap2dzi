@@ -49,6 +49,11 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, d
 
     # Iterate through all layers
     for layer in range(dzi.layers):
+        # Output path where the image will be stored
+        layer_output = os.path.join(out_path, 'layer{}_files'.format(layer), str(dzi.base_level))
+        image_output = os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format))
+        if os.path.exists(image_output):
+            continue
         gx0, gy0 = dzi.tile2grid(tx, ty, layer)
         left, right, top, bottom = dzi.tile_grid_bound(tx, ty, layer)
 
@@ -67,8 +72,6 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, d
                 render_square(tl, im, ox, oy, in_path, sx, sy, layer)
         im = dzi.crop_tile(im, tx, ty)
 
-        # Output path where the image will be stored
-        layer_output = os.path.join(out_path, 'layer{}_files'.format(layer), str(dzi.base_level))
         if im.getbbox():
             # Save the image
             if not dry_run:
