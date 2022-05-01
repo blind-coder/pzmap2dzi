@@ -1,4 +1,5 @@
 from __future__ import print_function
+from signal import signal, SIGINT
 import multiprocessing
 try:
    import queue
@@ -68,6 +69,12 @@ class Task(object):
         self.data = data
         self.n = n
         self.q = multiprocessing.Queue()
+        self.signal = False
+        signal(SIGINT, self.stop)
+
+    def stop(self, signal_received, frame):
+        print("SIGINT caught. Exiting gracefully.")
+        self.signal = True
 
     def run(self, jobs, verbose=False, break_key=None):
         if len(jobs) == 0:
@@ -95,14 +102,14 @@ class Task(object):
         if verbose:
             total = len(jobs)
             done = -working
-        stop = False
+        self.stop = False
         while working > 0:
             wid = self.q.get()
             if hk and hk.peek():
-                stop = True
+                self.signal = True
             if len(splits[wid]) == 0:
                 rebalance(splits, wid)
-            if not stop and splits[wid]:
+            if not self.signal and splits[wid]:
                 job = splits[wid].pop()
                 workers[wid].push(job)
             else:
@@ -114,14 +121,4 @@ class Task(object):
                     print('job: {}/{} worker: {}/{}   '.format(done, total, working, len(workers)), end='\r')
         if verbose:
             print('')
-        return not stop
-
-
-
-
-
-
-        
-
-
-
+        return not self.signal
