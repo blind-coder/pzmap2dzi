@@ -121,7 +121,7 @@ def process(args):
 
     # finally, create the floor level
     t = mp.Task(base_work, conf, args.mp)
-    if not t.run(groups, args.verbose, args.stop_key):
+    if not t.run(groups, args.verbose):
         return False
 
     if args.verbose:
@@ -136,7 +136,7 @@ def process(args):
         if args.verbose:
             print('processing layer {} pyramid:'.format(layer))
         path = os.path.join(args.output, 'layer{}_files'.format(layer))
-        if not dzi.merge_all_levels(path, args.mp, args.verbose, args.stop_key, args.output_format):
+        if not dzi.merge_all_levels(path, args.mp, args.verbose, args.output_format):
             return False
 
 if __name__ == '__main__':
@@ -158,7 +158,6 @@ if __name__ == '__main__':
     parser.add_argument('--group-size', type=int, default=0)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-e', '--save-empty-tile', action='store_true')
-    parser.add_argument('-s', '--stop-key', type=str, default='')
     parser.add_argument('--output-format', type=str, default='png')
     parser.add_argument('-n', '--dry-run', action='store_true')
     parser.add_argument('input', type=str)

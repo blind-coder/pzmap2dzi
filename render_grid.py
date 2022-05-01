@@ -89,14 +89,14 @@ def process(args):
     conf = (dzi, base_level_path, args.cell_grid, args.block_grid, args.save_empty_tile)
 
     t = mp.Task(grid_work, conf, args.mp)
-    if not t.run(groups, args.verbose, args.stop_key):
+    if not t.run(groups, args.verbose):
         return False
     if args.verbose:
         print('base level done')
 
     if args.verbose:
         print('processing pyramid:')
-    if not dzi.merge_all_levels(layer0_path, args.mp, args.verbose, args.stop_key):
+    if not dzi.merge_all_levels(layer0_path, args.mp, args.verbose):
         return False
 
 if __name__ == '__main__':
@@ -111,10 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--block-grid', action='store_true')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-e', '--save-empty-tile', action='store_true')
-    parser.add_argument('-s', '--stop-key', type=str, default='')
     parser.add_argument('input', type=str)
     args = parser.parse_args()
 
     process(args)
-
-

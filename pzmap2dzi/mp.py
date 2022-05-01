@@ -5,10 +5,6 @@ try:
    import queue
 except ImportError:
    import Queue as queue
-try:
-    from . import hotkey
-except:
-    hotkey = None
 
 class Worker(object):
     def __init__(self, func, data, wid, out_q):
@@ -76,7 +72,7 @@ class Task(object):
         print("SIGINT caught. Exiting gracefully.")
         self.signal = True
 
-    def run(self, jobs, verbose=False, break_key=None):
+    def run(self, jobs, verbose=False):
         if len(jobs) == 0:
             if verbose:
                 print('Nothing to do!')
@@ -93,9 +89,6 @@ class Task(object):
             w = Worker(self.func, self.data, i, self.q)
             w.start()
             workers.append(w)
-        hk = None
-        if break_key and hotkey:
-            hk = hotkey.listener([break_key])
 
         splits = split_list(jobs, len(workers))
         working = len(workers)
@@ -105,8 +98,6 @@ class Task(object):
         self.stop = False
         while working > 0:
             wid = self.q.get()
-            if hk and hk.peek():
-                self.signal = True
             if len(splits[wid]) == 0:
                 rebalance(splits, wid)
             if not self.signal and splits[wid]:
