@@ -6,10 +6,11 @@ xmin="${3}"
 xmax="${3}"
 ymin="${4}"
 ymax="${4}"
+format="${5:-png}"
 while [ -d "${base}/${level}" ]; do
 	for x in $(seq ${xmin} ${xmax}); do
 		for y in $(seq ${ymin} ${ymax}); do
-			rm -v ${base}/${level}/${x}_${y}.png
+			rm -v ${base}/${level}/${x}_${y}.${format}
 		done
 	done
 	xmin=$((xmin*2))
