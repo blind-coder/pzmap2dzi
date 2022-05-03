@@ -219,7 +219,10 @@ class DZI(object):
                     continue
         tile.thumbnail((self.tile_size, self.tile_size), Image.ANTIALIAS)
         tile = self.crop_tile(tile, tx, ty, level)
-        tile.save(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format)))
+        try:
+            tile.save(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format)))
+        except:
+            print('Error saving {}'.format(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format))))
         util.clear_wip(out_path, tx, ty)
 
     def _merge_work(self, conf, tx_ty):
