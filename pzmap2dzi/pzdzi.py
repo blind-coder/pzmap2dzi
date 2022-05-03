@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+import re
 from . import util, mp
 
 LAYER_HEIGHT = 192
@@ -28,8 +29,8 @@ def get_offset_in_tile(gx, gy):
     oy = (gy - 7) * SQR_HEIGHT // 2
     return ox, oy
 
-def load_tile(path, tx, ty):
-    tile = os.path.join(path, '{}_{}.png'.format(tx, ty))
+def load_tile(path, tx, ty, output_format):
+    tile = os.path.join(path, '{}_{}.{}'.format(tx, ty, output_format))
     if os.path.isfile(tile):
         return Image.open(tile)
     return None
@@ -174,7 +175,9 @@ class DZI(object):
             with open(os.path.join(path, 'layer{}.dzi'.format(layer)), 'w') as f:
                 f.write(dzi)
 
-    def get_tile_groups(self, out_path, max_group_size=0, skip_cells=set()):
+    def get_tile_groups(self, out_path, max_group_size=0, skip_cells=set(), output_format='png'):
+        util.TILE_PATTERN = re.compile('(\\d+)_(\\d+)\\.{}$'.format(output_format))
+        util.DONE_PATTERN = re.compile('(\\d+)_(\\d+)\\.(?:empty|{})$'.format(output_format))
         done = util.get_done_tiles(out_path)
         groups = []
         for cx, cy in sorted(list(self.cells)):
@@ -207,9 +210,9 @@ class DZI(object):
             ntx = tx * 2 + i
             nty = ty * 2 + j
             try:
-                ntile = load_tile(in_path, ntx, nty)
+                ntile = load_tile(in_path, ntx, nty, output_format)
             except:
-                print('Error loading {}/{}_{}.png!'.format(in_path, ntx, nty))
+                print('Error loading {}/{}_{}.{}!'.format(in_path, ntx, nty, output_format))
                 continue
             if ntile:
                 try:
@@ -248,6 +251,8 @@ class DZI(object):
         return t.run(self.get_level_tiles(path, level), verbose)
 
     def merge_all_levels(self, path, parallel=1, verbose=False, output_format='png'):
+        util.TILE_PATTERN = re.compile('(\\d+)_(\\d+)\\.{}$'.format(output_format))
+        util.DONE_PATTERN = re.compile('(\\d+)_(\\d+)\\.(?:empty|{})$'.format(output_format))
         for level in reversed(range(self.base_level)):
             if verbose:
                 print('processing level {}:'.format(level))

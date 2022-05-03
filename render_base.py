@@ -114,7 +114,7 @@ def process(args):
     layer0_path = os.path.join(args.output, 'layer0_files', str(dzi.base_level))
 
     # ???
-    groups = dzi.get_tile_groups(layer0_path, args.group_size)
+    groups = dzi.get_tile_groups(layer0_path, args.group_size, set(), args.output_format)
 
     # configuration for the multithread runner
     conf = (dzi, texture_lib, args.input, args.output, args.save_empty_tile, args.output_format, args.dry_run)
