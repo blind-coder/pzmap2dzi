@@ -144,5 +144,5 @@ class PlantsInfo(object):
                 textures.append('{}_1_{}'.format(prefix, idx + stages * 5))
             if snow:
                 textures = ['{}_1_{}'.format(prefix, idx + stages)]
-            print('Adding jumbo_tree_01_{} = {}'.format(i, textures[1]))
+            print('Adding jumbo_tree_01_{} = {}'.format(i, textures[0]))
             self.mapping['jumbo_tree_01_{}'.format(i)] = textures
