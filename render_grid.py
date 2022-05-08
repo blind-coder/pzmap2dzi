@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from PIL import Image, ImageDraw, ImageFont
 import os
 from pzmap2dzi import util, mp, pzdzi
@@ -53,7 +54,7 @@ def render_grid(dzi, tx, ty, out_path, cell_grid, block_grid, save_empty):
             if cell_grid and sx % 300 == 1 and sy % 300 == 1:
                 drawing.append((render_text, ('{},{}'.format(sx // 300, sy // 300), CELL_COLOR, CELL_FONT)))
             if block_grid and sx % 10 == 0 and sy % 10 == 0:
-                drawing.append((render_text, ('{},{}'.format(sx // 10, sy // 10), BLOCK_COLOR, BLOCK_FONT)))
+                drawing.append((render_text, ('{}x,{}x'.format(sx // 10, sy // 10), BLOCK_COLOR, BLOCK_FONT)))
             if drawing:
                 if not im:
                     im = Image.new('RGBA', (dzi.tile_size, dzi.tile_size))
