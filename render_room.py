@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from PIL import Image, ImageDraw, ImageFont
 import os
 from pzmap2dzi import lotheader, util, mp, pzdzi
