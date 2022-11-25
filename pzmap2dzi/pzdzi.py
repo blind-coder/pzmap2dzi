@@ -223,6 +223,8 @@ class DZI(object):
         tile.thumbnail((self.tile_size, self.tile_size), Image.ANTIALIAS)
         tile = self.crop_tile(tile, tx, ty, level)
         try:
+            if output_format == "jpg":
+                tile = tile.convert("RGB")
             tile.save(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format)))
         except:
             print('Error saving {}'.format(os.path.join(out_path, '{}_{}.{}'.format(tx, ty, output_format))))

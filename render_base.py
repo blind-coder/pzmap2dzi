@@ -75,6 +75,8 @@ def render_tile(dzi, tx, ty, tl, in_path, out_path, save_empty, output_format, d
         if im.getbbox():
             # Save the image
             if not dry_run:
+                if output_format == "jpg":
+                    im = im.convert("RGB")
                 im.save(os.path.join(layer_output, '{}_{}.{}'.format(tx, ty, output_format)))
         elif layer == 0 and save_empty:
             # Save an empty file, only if requested
