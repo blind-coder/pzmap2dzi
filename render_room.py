@@ -144,10 +144,15 @@ COLOR_MAP = {
 DEFAULT_COLOR = 'cyan'
 ROOM_FONT = ImageFont.truetype("Vera.ttf", 20)
 def render_text(draw, x, y, text, color, font):
-    w, h = draw.textsize(text, font)
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+    w = right - left
+    h = bottom - top
     if w >= pzdzi.SQR_WIDTH:
         text = break_long_text(text)
-        w, h = draw.textsize(text, font)
+        #w, h = draw.textsize(text, font)
+        left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+        w = right - left
+        h = bottom - top
     #draw.rectangle([x - w // 2, y - h // 2, x + w // 2, y + h // 2], fill=(0, 0, 0, 0))
     draw.text((x - w // 2, y - h // 2), text, color, font, align='center')
 

@@ -8,7 +8,9 @@ BLOCK_COLOR = (0, 255, 0, 255) # green
 CELL_FONT = ImageFont.truetype("Vera.ttf", 40)
 BLOCK_FONT = ImageFont.truetype("Vera.ttf", 20)
 def render_text(draw, x, y, text, color, font):
-    w, h = draw.textsize(text, font)
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+    w = right - left
+    h = bottom - top
     draw.text((x - w // 2, y - h // 2), text, color, font)
 
 def render_gridx(draw, x, y, color, width):
@@ -23,6 +25,7 @@ def render_gridy(draw, x, y, color, width):
 
 def render_grid(dzi, tx, ty, out_path, cell_grid, block_grid, save_empty):
     if not util.set_wip(out_path, tx, ty):
+        print("util.set_wip(%s, %i, %i) failed!" % (out_path, tx, ty))
         return
     gx0, gy0 = dzi.tile2grid(tx, ty, 0)
     left, right, top, bottom = dzi.tile_grid_bound(tx, ty, 0)
@@ -40,7 +43,6 @@ def render_grid(dzi, tx, ty, out_path, cell_grid, block_grid, save_empty):
                 continue
             x = (gx - gx0) * pzdzi.SQR_WIDTH // 2
             y = (gy - gy0) * pzdzi.SQR_HEIGHT // 2
-
 
             drawing = []
             if cell_grid and sx % 300 == 0:
